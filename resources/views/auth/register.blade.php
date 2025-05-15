@@ -2,6 +2,20 @@
     <form method="POST" action="{{ route('register') }}">
         @csrf
 
+        <!-- Phone / Subdomain -->
+<div class="mt-4">
+    <label for="phone">Nombor WhatsApp</label>
+    <div class="flex">
+        <input id="phone" type="text" name="phone" required class="block w-full rounded-l-md" placeholder="Contoh: 0123456789" />
+        <span class="inline-flex items-center px-3 rounded-r-md bg-gray-700 text-white text-sm">
+            .2laravel.my
+        </span>
+    </div>
+    <!-- ✅ Tambah baris ini -->
+    <x-input-error :messages="$errors->get('phone')" class="mt-2" />
+</div>
+
+
         <!-- Name -->
         <div>
             <x-input-label for="name" :value="__('Name')" />
