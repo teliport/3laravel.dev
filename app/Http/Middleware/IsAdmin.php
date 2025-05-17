@@ -11,15 +11,16 @@ class IsAdmin
     /**
      * Handle an incoming request.
      *
+     * @param  \Illuminate\Http\Request  $request
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function handle($request, \Closure $next)
-{
-    if (auth()->check() && auth()->user()->role === 'admin') {
-        return $next($request);
+    public function handle(Request $request, Closure $next): Response
+    {
+        if (auth()->check() && auth()->user()->role === 'admin') {
+            return $next($request);
+        }
+
+        abort(403, 'Unauthorized');
     }
-
-    abort(403, 'Unauthorized');
-}
-
 }

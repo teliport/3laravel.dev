@@ -4,6 +4,17 @@
 use Illuminate\Support\Facades\Route;
 use App\Models\User;
 use App\Http\Controllers\ProfileController;
+use Illuminate\Http\Request;
+
+Route::get('/', function () {
+    if (!Storage::exists('landing.html')) {
+        return 'Landing page belum disediakan.';
+    }
+
+    $html = Storage::get('landing.html');
+    return view('grapes.landing_output', compact('html'));
+});
+
 
 // 🟢 Route domain utama (dkad.my) + Admin
 Route::middleware(['auth'])->group(function () {
@@ -39,7 +50,7 @@ Route::domain('{phone}.dkad.my')->group(function () {
             return view('vcard', ['user' => $user]);
         }
 
-        return redirect()->to('https://wa.me/' . $phone);
+        return redirect()->to('https://wa.me/6' . $phone);
     });
 
     // Optional: benarkan /dashboard juga untuk subdomain
@@ -47,5 +58,23 @@ Route::domain('{phone}.dkad.my')->group(function () {
         return view('dashboard'); // Atau paparan khas jika mahu
     })->middleware(['auth']);
 });
+
+Route::post('/api/save-landing', function (Request $request) {
+    $html = $request->input('html');
+    $css = $request->input('css');
+
+    $content = "<style>{$css}</style>\n{$html}";
+
+    Storage::disk('local')->put('landing.html', $content);
+
+    return response()->json(['success' => true]);
+})->middleware('auth'); // optional: hanya untuk admin
+
+
+Route::get('/editor', function () {
+    return view('grapes.editor');
+})->middleware(['auth', 'admin']);
+
+
 
 require __DIR__.'/auth.php';
